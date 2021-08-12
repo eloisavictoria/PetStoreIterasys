@@ -10,6 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.contains;
 
 //3 - classe
 public class Pet {
@@ -28,20 +30,21 @@ public class Pet {
     //Paths.get - pega  o caminho..???
     //Files.readAllBytes - lê o caminho..??
     //caminhoJson é uma variavel que vai carregar o caminho json
-    public String lerJson(String caminhoJson) throws IOException {
+    public String lerJson(String caminhoJson) throws IOException {//função
     //função para ler a estrutura de qualquer arquivo json desde que eu passe o caminho e o retorno será o arquivo json
         return new String(Files.readAllBytes(Paths.get(caminhoJson)));
     }//retornar uma string com o conteúdo do json
 
     //Incluir - creat - post
     @Test //notação para saber que o método é um teste. Identifica o método ou função como um teste para o TestNG
-    public void incluirPet() throws IOException {
+    public void incluirPet() throws IOException {//método
         String jsonBody = lerJson("db/cachorro.json");
 
         //Sintaxe Gherkin
         //Dado - Quando - Então
         //Given = When - Then
 
+        //REST-Assured
         //como se tudo fosse uma só linha, nã precisa de ponto e virgula
         //inicio da linha
         given() //dado - pré condições
@@ -53,6 +56,13 @@ public class Pet {
         .then() //então
                 .log().all() //registre tudo - retorno - resposta
                 .statusCode(200)//checar se a transação foi e voltou
+                //o statuscode só checa que foi feito o envio com sucesso,não significa que o processo de inserção deu certo
+                .body("name", is("diana")) //valida se o nome do cachorro é Lilica
+                .body("status", is("available")) //valida se o status é available
+                .body("category.name", is("dog"))//quando quero pegar informação de dentro de uma tag
+                .body("tags.name", contains("dogvelhinho"))
+        //quando tem colchete no arquivo json (significa que tem uma lista) então preciso usar o contains
+        //is é usado para quando é uma informação que não é uma lista
         ;//fim da linha
     }
 
