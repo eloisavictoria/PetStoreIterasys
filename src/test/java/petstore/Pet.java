@@ -105,4 +105,24 @@ public class Pet<plublic> {
                 .body("status", is("sold"))
         ;
     }
+
+    @Test(priority = 4)
+    public void excluirPet(){
+        String petId = "13211931";
+
+        given()
+                .contentType("application/json")
+                .log().all()
+        .when()
+                .delete(uri + "/" + petId)
+        .then()
+                .log().all()
+                .statusCode(200) //status ok
+                .body("code", is(200)) //olhando a estrutura do json, é diferente do code
+                .body("type", is("unknown"))
+                .body("message", is(petId))
+
+        ;
+
+    }
 }
