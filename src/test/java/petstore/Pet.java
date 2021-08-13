@@ -14,7 +14,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 
 //3 - classe
-public class Pet {
+public class Pet<plublic> {
     //3.1 - atributos
     String uri = "https://petstore.swagger.io/v2/pet"; //endereço da interface swagger pet
 
@@ -71,7 +71,7 @@ public class Pet {
     public void consultarPet(){
         String petId = "13211931";
 
-        String token=
+        String token =
         given()
                 .contentType("application/json")
                 .log().all()
@@ -86,6 +86,23 @@ public class Pet {
         .extract() //testamos para poder extrair um token, que é uma idfentificação de transação
                 .path("category.name");
         System.out.println("O token é "+token);
+    }
 
+    @Test(priority = 3)
+    public void alterarPet() throws IOException {
+        String jsonBody = lerJson("db/cachorro1.json");
+
+        given()
+                .contentType("application/json")
+                .log().all()
+                .body(jsonBody)
+        .when()
+                .put(uri)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("name", is("diana"))
+                .body("status", is("sold"))
+        ;
     }
 }
